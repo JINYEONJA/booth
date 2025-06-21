@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디지털 스탬프 챌린지! (Ver 4.0 - 최종 완성본)</title>
+    <title>디지털 스탬프 챌린지! (Ver 4.1 - 최종 수정본)</title>
     <style>
         /* 기본 폰트 및 배경 설정 */
         body {
@@ -108,7 +108,7 @@
             transition: all 0.4s ease;
             background-color: #f0f0f0;
             color: #aaa;
-            font-size: 1.4em;
+            font-size: 1.6em; /* 부스 이름이 짧아져서 폰트를 조금 키움 */
             font-weight: bold;
             padding: 10px;
             word-break: keep-all;
@@ -154,7 +154,7 @@
             .stamp-board {
                 grid-template-columns: repeat(2, 1fr); /* 2열로 변경 */
             }
-            .stamp { font-size: 1.1em; }
+            .stamp { font-size: 1.4em; }
         }
     </style>
 </head>
@@ -202,19 +202,19 @@
         const resetButton = document.getElementById('reset-button');
         const congratsMessage = document.getElementById('congrats-message');
 
-        // --- 데이터 및 상태 변수 ---
+        // --- 데이터 및 상태 변수 (이름이 '부스'로 변경되었습니다) ---
         const stampData = [
-            { id: 'hilearning', name: '하이러닝', password: '0702', color: { border: '#4a90e2', bg: '#d4e6ff', text: '#00408b' } },
-            { id: 'hicoaching', name: '하이코칭', password: '0703', color: { border: '#50e3c2', bg: '#d7fff7', text: '#00695c' } },
-            { id: 'ai-essay', name: 'AI서논술형', password: '0704', color: { border: '#bd10e0', bg: '#f2d1f7', text: '#6a0080' } },
-            { id: 'online-school', name: '온라인<br>공유학교', password: '0705', color: { border: '#f5a623', bg: '#fff0d5', text: '#8c5d00' } },
-            { id: 'digital-citizen', name: '디지털<br>시민교육', password: '0706', color: { border: '#7ed321', bg: '#e9ffd1', text: '#387002' } },
-            { id: 'digital-center', name: '디지털센터', password: '0707', color: { border: '#e55039', bg: '#ffddd8', text: '#8d230f' } },
+            { id: 'booth1', name: '부스1', password: '0702', color: { border: '#4a90e2', bg: '#d4e6ff', text: '#00408b' } },
+            { id: 'booth2', name: '부스2', password: '0703', color: { border: '#50e3c2', bg: '#d7fff7', text: '#00695c' } },
+            { id: 'booth3', name: '부스3', password: '0704', color: { border: '#bd10e0', bg: '#f2d1f7', text: '#6a0080' } },
+            { id: 'booth4', name: '부스4', password: '0705', color: { border: '#f5a623', bg: '#fff0d5', text: '#8c5d00' } },
+            { id: 'booth5', name: '부스5', password: '0706', color: { border: '#7ed321', bg: '#e9ffd1', text: '#387002' } },
+            { id: 'booth6', name: '부스6', password: '0707', color: { border: '#e55039', bg: '#ffddd8', text: '#8d230f' } },
         ];
         let stampedIds = new Set();
         let currentUserKey = null;
 
-        // --- 함수 정의 ---
+        // --- 함수 정의 (이하 코드는 변경 없음) ---
         
         function renderStamps() {
             stampBoard.innerHTML = '';
@@ -261,7 +261,6 @@
             }
         }
 
-        // 스탬프 클릭 시 비밀번호 확인 (가장 중요하게 변경된 부분)
         function handleStampClick(event) {
             const clickedStamp = event.target.closest('.stamp');
             if (!clickedStamp) return;
@@ -276,16 +275,16 @@
             const matchedStamp = stampData.find(s => s.id === stampId);
             if (!matchedStamp) return;
 
-            const userInput = prompt(`'${matchedStamp.name.replace('<br>', ' ')}' 스탬프의 비밀번호를 입력하세요:`);
+            const userInput = prompt(`'${matchedStamp.name}' 스탬프의 비밀번호를 입력하세요:`);
 
             if (userInput === null) {
-                return; // 사용자가 '취소'를 누름
+                return;
             }
 
             if (userInput.trim() === matchedStamp.password) {
                 alert('정답입니다! 스탬프를 획득했습니다! 쾅!');
                 stampedIds.add(stampId);
-                renderStamps(); // 화면 업데이트
+                renderStamps();
             } else {
                 alert('비밀번호가 틀렸습니다. 다시 시도해주세요.');
             }
@@ -318,7 +317,7 @@
         loginButton.addEventListener('click', handleLogin);
         birthdateInput.addEventListener('keyup', e => e.key === 'Enter' && handleLogin());
         logoutButton.addEventListener('click', handleLogout);
-        stampBoard.addEventListener('click', handleStampClick); // 수정된 함수 연결
+        stampBoard.addEventListener('click', handleStampClick);
         saveButton.addEventListener('click', saveProgress);
         resetButton.addEventListener('click', resetProgress);
 
