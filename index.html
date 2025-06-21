@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지털 스탬프 챌린지! (Ver 4.0 - 최종 완성본)</title>
+    <style>
+        /* 기본 폰트 및 배경 설정 */
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            transition: all 0.5s ease-in-out;
+        }
+
+        h1 {
+            color: #1a2c4e;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* 로그인 영역 */
+        #auth-container {
+            /* 기본적으로 보임 */
+        }
+        
+        /* 메인 콘텐츠 영역 (초기에는 숨김) */
+        #main-container {
+            display: none;
+        }
+
+        /* 입력 필드 및 버튼 스타일 */
+        .input-area {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .input-field {
+            padding: 12px 15px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            width: 220px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #6a82fb;
+        }
+
+        .primary-button {
+            padding: 12px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            background-image: linear-gradient(to right, #6a82fb 0%, #fc5c7d 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .primary-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* 스탬프 보드 (데스크탑: 3열, 모바일: 2열) */
+        .stamp-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* 개별 스탬프 */
+        .stamp {
+            aspect-ratio: 1 / 1;
+            border: 5px dashed #ccc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background-color: #f0f0f0;
+            color: #aaa;
+            font-size: 1.4em;
+            font-weight: bold;
+            padding: 10px;
+            word-break: keep-all;
+        }
+
+        /* 획득한 스탬프 */
+        .stamp.stamped {
+            border-style: solid;
+            transform: rotate(-8deg) scale(1.05);
+        }
+
+        /* 하단 버튼 영역 */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap; /* 모바일에서 버튼이 줄바꿈 되도록 */
+            justify-content: center;
+            gap: 15px;
+        }
+        .action-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 8px;
+            border: 2px solid;
+            cursor: pointer;
+            background-color: white;
+            transition: all 0.3s;
+        }
+        #save-button { color: #27ae60; border-color: #27ae60; }
+        #save-button:hover { background-color: #27ae60; color: white; }
+        #reset-button { color: #e74c3c; border-color: #e74c3c; }
+        #reset-button:hover { background-color: #e74c3c; color: white; }
+        #logout-button { color: #8e44ad; border-color: #8e44ad; }
+        #logout-button:hover { background-color: #8e44ad; color: white; }
+
+        /* 축하 메시지 */
+        #congrats-message { display: none; margin-top: 40px; font-size: 1.8em; font-weight: bold; color: #fc5c7d; }
+
+        /* 모바일 반응형 (화면 너비 600px 이하) */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.8em; }
+            .stamp-board {
+                grid-template-columns: repeat(2, 1fr); /* 2열로 변경 */
+            }
+            .stamp { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. 로그인 영역 -->
+        <div id="auth-container">
+            <h1>✨ 디지털 스탬프 챌린지! ✨</h1>
+            <p>본인 확인을 위해 생년월일 6자리를 입력해주세요.<br>(예: 900101)</p>
+            <div class="input-area">
+                <input type="password" id="birthdate-input" class="input-field" placeholder="생년월일 6자리" maxlength="6" pattern="[0-9]*">
+                <button id="login-button" class="primary-button">확인</button>
+            </div>
+        </div>
+
+        <!-- 2. 메인 콘텐츠 영역 (로그인 후 보임) -->
+        <div id="main-container">
+            <h1>나의 스탬프 현황</h1>
+            <p>스탬프를 클릭하고 비밀번호를 입력하여 도장을 모아보세요!</p>
+            
+            <div class="stamp-board">
+                <!-- 스탬프가 동적으로 생성될 공간 -->
+            </div>
+
+            <div class="action-buttons">
+                <button id="save-button" class="action-button">💾 진행 상황 저장하기</button>
+                <button id="reset-button" class="action-button">🔄 처음부터 다시하기</button>
+                <button id="logout-button" class="action-button">🚪 로그아웃</button>
+            </div>
+
+            <h2 id="congrats-message">🎉 모든 스탬프를 모았습니다! 정말 대단해요! 🎉</h2>
+        </div>
+    </div>
+
+    <script>
+        // --- 요소 선택 ---
+        const authContainer = document.getElementById('auth-container');
+        const mainContainer = document.getElementById('main-container');
+        const birthdateInput = document.getElementById('birthdate-input');
+        const loginButton = document.getElementById('login-button');
+        const logoutButton = document.getElementById('logout-button');
+        const stampBoard = document.querySelector('.stamp-board');
+        const saveButton = document.getElementById('save-button');
+        const resetButton = document.getElementById('reset-button');
+        const congratsMessage = document.getElementById('congrats-message');
+
+        // --- 데이터 및 상태 변수 ---
+        const stampData = [
+            { id: 'hilearning', name: '하이러닝', password: '0702', color: { border: '#4a90e2', bg: '#d4e6ff', text: '#00408b' } },
+            { id: 'hicoaching', name: '하이코칭', password: '0703', color: { border: '#50e3c2', bg: '#d7fff7', text: '#00695c' } },
+            { id: 'ai-essay', name: 'AI서논술형', password: '0704', color: { border: '#bd10e0', bg: '#f2d1f7', text: '#6a0080' } },
+            { id: 'online-school', name: '온라인<br>공유학교', password: '0705', color: { border: '#f5a623', bg: '#fff0d5', text: '#8c5d00' } },
+            { id: 'digital-citizen', name: '디지털<br>시민교육', password: '0706', color: { border: '#7ed321', bg: '#e9ffd1', text: '#387002' } },
+            { id: 'digital-center', name: '디지털센터', password: '0707', color: { border: '#e55039', bg: '#ffddd8', text: '#8d230f' } },
+        ];
+        let stampedIds = new Set();
+        let currentUserKey = null;
+
+        // --- 함수 정의 ---
+        
+        function renderStamps() {
+            stampBoard.innerHTML = '';
+            stampData.forEach(data => {
+                const stampElement = document.createElement('div');
+                stampElement.className = 'stamp';
+                stampElement.dataset.id = data.id;
+                stampElement.innerHTML = data.name;
+
+                if (stampedIds.has(data.id)) {
+                    stampElement.classList.add('stamped');
+                    stampElement.style.borderColor = data.color.border;
+                    stampElement.style.backgroundColor = data.color.bg;
+                    stampElement.style.color = data.color.text;
+                }
+                stampBoard.appendChild(stampElement);
+            });
+            checkAllStamped();
+        }
+
+        function checkAllStamped() {
+            congratsMessage.style.display = (stampedIds.size === stampData.length) ? 'block' : 'none';
+        }
+
+        function handleLogin() {
+            const birthdate = birthdateInput.value;
+            if (birthdate.length !== 6 || !/^\d{6}$/.test(birthdate)) {
+                alert('생년월일 6자리를 숫자로 정확히 입력해주세요.');
+                return;
+            }
+            currentUserKey = `stamp-progress-${birthdate}`;
+            authContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            loadProgress();
+        }
+
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                currentUserKey = null;
+                stampedIds.clear();
+                birthdateInput.value = '';
+                mainContainer.style.display = 'none';
+                authContainer.style.display = 'block';
+            }
+        }
+
+        // 스탬프 클릭 시 비밀번호 확인 (가장 중요하게 변경된 부분)
+        function handleStampClick(event) {
+            const clickedStamp = event.target.closest('.stamp');
+            if (!clickedStamp) return;
+
+            const stampId = clickedStamp.dataset.id;
+            
+            if (stampedIds.has(stampId)) {
+                alert('이미 획득한 스탬프입니다.');
+                return;
+            }
+
+            const matchedStamp = stampData.find(s => s.id === stampId);
+            if (!matchedStamp) return;
+
+            const userInput = prompt(`'${matchedStamp.name.replace('<br>', ' ')}' 스탬프의 비밀번호를 입력하세요:`);
+
+            if (userInput === null) {
+                return; // 사용자가 '취소'를 누름
+            }
+
+            if (userInput.trim() === matchedStamp.password) {
+                alert('정답입니다! 스탬프를 획득했습니다! 쾅!');
+                stampedIds.add(stampId);
+                renderStamps(); // 화면 업데이트
+            } else {
+                alert('비밀번호가 틀렸습니다. 다시 시도해주세요.');
+            }
+        }
+
+        function saveProgress() {
+            if (!currentUserKey) return;
+            localStorage.setItem(currentUserKey, JSON.stringify(Array.from(stampedIds)));
+            alert('현재 진행 상황이 이 브라우저에 저장되었습니다!');
+        }
+        
+        function loadProgress() {
+            if (!currentUserKey) return;
+            const savedData = localStorage.getItem(currentUserKey);
+            stampedIds = savedData ? new Set(JSON.parse(savedData)) : new Set();
+            renderStamps();
+        }
+
+        function resetProgress() {
+            if (!currentUserKey) return;
+            if (confirm('정말 모든 스탬프를 초기화하시겠습니까? 저장된 기록이 사라집니다.')) {
+                stampedIds.clear();
+                localStorage.removeItem(currentUserKey);
+                renderStamps();
+                alert('초기화되었습니다.');
+            }
+        }
+
+        // --- 이벤트 리스너 연결 ---
+        loginButton.addEventListener('click', handleLogin);
+        birthdateInput.addEventListener('keyup', e => e.key === 'Enter' && handleLogin());
+        logoutButton.addEventListener('click', handleLogout);
+        stampBoard.addEventListener('click', handleStampClick); // 수정된 함수 연결
+        saveButton.addEventListener('click', saveProgress);
+        resetButton.addEventListener('click', resetProgress);
+
+    </script>
+</body>
+</html>
